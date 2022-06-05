@@ -9,6 +9,6 @@ Vias Along Path is a KiCAD plugin to create vias along a set of graphical lines 
 
 ## Example
 
-![example](res/example.png)
+![example](res/example.PNG)
 
 In this example I drew the pcb outline using KiCAD and exported the outline as .dxf file using the File -> Plot option. I then used the offset tool of LibreCAD to generate the soldermask path with an distance of 0.5 mm. Next I imported the DXF file to KiCAD with an line width of 1 mm to the soldermask layer. Last we can generate the vias along the soldermask path using this plugin resulting in an pcb as shown in the screenshot.
