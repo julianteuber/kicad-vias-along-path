@@ -69,6 +69,8 @@ class ViasAlongPath_Dlg(ViasAlongPathDlg.ViasAlongPathDlg):
         import wx
         ViasAlongPathDlg.ViasAlongPathDlg.__init__(self, parent)
         self.SetMinSize(self.GetSize())
+        self.SetIcon(wx.Icon(os.path.join(
+            os.path.dirname(__file__), "./vias_along_path.png")))
         self.m_buttonRun.Bind(wx.EVT_BUTTON, self.onRunClick)
         self.m_buttonRun.SetFocus()
         if wx.__version__ < '4.0':
