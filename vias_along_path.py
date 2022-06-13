@@ -122,6 +122,11 @@ class ViasAlongPath(pcbnew.ActionPlugin):
         aParameters.m_SizeMM.SetValue("0.8")
         aParameters.m_DrillMM.SetValue("0.4")
         PopulateNets("GND", aParameters.m_NetName)
+
+        aParameters.m_DistributeVias.SetToolTip(wx.ToolTip(
+            "Recalculate the exact via distance to distribute the vias equally."))
+        aParameters.m_endPointVia.SetToolTip(wx.ToolTip(
+            "Force via on end point, which might not be equally spaced."))
         aParameters.m_bitmapHelp.SetBitmap(wx.Bitmap(os.path.join(
             os.path.dirname(os.path.realpath(__file__)), r"res\via_path_help.png")))
 
@@ -135,10 +140,19 @@ class ViasAlongPath(pcbnew.ActionPlugin):
         viaDrill = FromMM(self.CheckDistanceInput(
             aParameters.m_DrillMM.GetValue(), "drill size of the vias"))
         viaNet = aParameters.m_NetName.GetStringSelection()
+        if aParameters.m_DistributeVias.IsChecked():
+            distributeVias = True
+        else:
+            distributeVias = False
+        if aParameters.m_endPointVia.IsChecked():
+            endpointVia = True
+        else:
+            endpointVia = False
 
         if viaDist is not None and viaSize is not None and viaDrill is not None:
             if modal_result == wx.ID_REVERT:
-                create_vias(pcb, viaDist, viaSize, viaDrill, viaNet)
+                create_vias(pcb, viaDist, viaSize, viaDrill,
+                            viaNet, distributeVias, endpointVia)
             else:
                 None  # Cancel
         else:
@@ -146,7 +160,7 @@ class ViasAlongPath(pcbnew.ActionPlugin):
         aParameters.Destroy()
 
 
-def create_vias(pcb, viaDist, viaSize, viaDrill, viaNet):
+def create_vias(pcb, viaDist, viaSize, viaDrill, viaNet, distributeVias, endpointVia):
     shapes = selected_shapes(pcb)
     shapes_arc = []
     shapes_line = []
@@ -208,10 +222,16 @@ def create_vias(pcb, viaDist, viaSize, viaDrill, viaNet):
         wx.LogError("Line crosses itself!")
         return
 
+    if distributeVias:
+        lineLength = line.length
+        viaQty = np.round(lineLength/viaDist)
+        viaDist = (lineLength/viaQty).item()
+
     distances = np.arange(0, line.length, viaDist)
     points = [line.interpolate(distance)
               for distance in distances]
-    points = points + [line.boundary[1]] if not line.is_ring else points
+    points = points + [line.boundary[1]
+                       ] if (not line.is_ring and (endpointVia or distributeVias)) else points
     viaPoints = ops.unary_union(points)
 
     # Place vias on precalculated points
@@ -241,7 +261,8 @@ def create_vias(pcb, viaDist, viaSize, viaDrill, viaNet):
 
     wxLogDebug(f"Line is a closed ring.", line.is_ring and debug)
     wxLogDebug(f"Path length is {ToMM(line.length):.3f} mm.", debug)
-    wxLogDebug(f"{len(viaPoints)} vias placed.", debug)
+    wxLogDebug(
+        f"{len(viaPoints)} vias placed {ToMM(viaDist):.3f} mm apart.", debug)
 
 
 def selected_shapes(pcb):

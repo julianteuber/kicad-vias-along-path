@@ -17,7 +17,7 @@ import wx.xrc
 class ViasAlongPathDlg ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Vias Along Path", pos = wx.DefaultPosition, size = wx.Size( 300,475 ), style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Vias Along Path", pos = wx.DefaultPosition, size = wx.Size( 350,500 ), style = wx.DEFAULT_DIALOG_STYLE )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -70,6 +70,18 @@ class ViasAlongPathDlg ( wx.Dialog ):
 		m_NetNameChoices = []
 		self.m_NetName = wx.ComboBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, m_NetNameChoices, 0 )
 		fgSizer_Parameters.Add( self.m_NetName, 1, wx.ALL, 5 )
+
+
+		fgSizer_Parameters.Add( ( 0, 0), 1, wx.EXPAND, 5 )
+
+		self.m_DistributeVias = wx.CheckBox( self, wx.ID_ANY, u"Distribute vias", wx.DefaultPosition, wx.DefaultSize, 0 )
+		fgSizer_Parameters.Add( self.m_DistributeVias, 0, wx.ALL, 5 )
+
+
+		fgSizer_Parameters.Add( ( 0, 0), 1, wx.EXPAND, 5 )
+
+		self.m_endPointVia = wx.CheckBox( self, wx.ID_ANY, u"Force via on endpoint", wx.DefaultPosition, wx.DefaultSize, 0 )
+		fgSizer_Parameters.Add( self.m_endPointVia, 0, wx.ALL, 5 )
 
 
 		bSizer_Main.Add( fgSizer_Parameters, 0, wx.EXPAND|wx.ALL, 5 )
