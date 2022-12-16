@@ -7,6 +7,13 @@ Vias Along Path is a KiCAD plugin to create vias along a set of graphical lines 
 - Drill size
 - Net the via is attached to
 
+## Dependencies
+
+The Plugin requires additional Python packages to be installed:
+
+- [numpy](https://pypi.org/project/numpy/)
+- [shapely](https://pypi.org/project/shapely/)
+
 ## Example
 
 ![example](res/example.PNG)
